@@ -28,8 +28,7 @@ function addNewPizza(pizzaObj: Pizza) {
 function placeOrder(pizzaName: string) {
   const selectedPizza = menu.find((pizzaObj) => pizzaObj.name === pizzaName);
   if (!selectedPizza) {
-    console.error(`${pizzaName} does not exist in the menu.`);
-    return;
+    throw new Error(`${pizzaName} does not exist in the menu.`);
   }
   cashInRegister += selectedPizza.price;
   const newOrder: Order = {
@@ -44,8 +43,7 @@ function placeOrder(pizzaName: string) {
 function completeOrder(orderId: number) {
   const order = orderQueue.find((order) => order.id === orderId);
   if (!order) {
-    console.error(`${orderId} was not found in the orderQueue.`);
-    return;
+    throw new Error(`${orderId} was not found in the orderQueue.`);
   }
   order.status = "completed";
   return order;
@@ -57,8 +55,12 @@ function getPizzaDetail(identifier: string | number) {
       (pizza) =>
         pizza.name.toLocaleLowerCase() === identifier.toLocaleLowerCase(),
     );
-  } else {
+  } else if (typeof identifier === "number") {
     return menu.find((pizza) => pizza.id === identifier);
+  } else {
+    throw new TypeError(
+      "Parameter `identifier` must be either a string or a number",
+    );
   }
 }
 
